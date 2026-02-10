@@ -7,3 +7,7 @@ arm-none-eabi-ld -T linker.ld boot.o kernel.o -o kernel.elf
 
 qemu-system-arm -M versatilepb -m 128M -kernel kernel.elf -hda ~/qemu_disks/os_disk.qcow2 -nongraphic
 
+
+
+
+qemu-img create -f qcow2 WindowsVM.qcow2 30G
