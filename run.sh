@@ -1,13 +1,16 @@
-#!/bin/sh
+#!/bin/bash
+
 set -e
 
-arm-none-eabi-gcc -c -O2 -ffreestanding -nostdlib kernel.c -o kernel.o
-arm-none-eabi-as boot.S -o boot.o
-arm-none-eabi-ld -T linker.ld boot.o kernel.o -o kernel.elf
+aarch64-elf-gcc -c boot.S            -o boot.o   -nostdlib -ffreestanding
+aarch64-elf-gcc -c fb.c              -o fb.o     -nostdlib -ffreestanding
+aarch64-elf-gcc -c font8x8_basic.c   -o font.o   -nostdlib -ffreestanding
+aarch64-elf-gcc -c console.c         -o console.o -nostdlib -ffreestanding
+aarch64-elf-gcc -c kernel.c          -o kernel.o -nostdlib -ffreestanding
+aarch64-elf-gcc -c string.c          -o string.o -nostdlib -ffreestanding
+aarch64-elf-gcc -c fs.c              -o fs.o     -nostdlib -ffreestanding
 
-qemu-system-arm -M versatilepb -m 128M -kernel kernel.elf -hda ~/qemu_disks/os_disk.qcow2 -nongraphic
+aarch64-elf-ld -T linker.ld -o kernel.elf \
+    boot.o fb.o font.o console.o kernel.o string.o fs.o
 
-
-
-
-qemu-img create -f qcow2 WindowsVM.qcow2 30G
+aarch64-elf-objcopy -O binary kernel.elf kernel8.img
